@@ -13,5 +13,28 @@ typedef struct {
     bool state;
 } ct_can_button_state_t;
 
+#define CANBUS_BUTTON_PRESSED(MSG, BYTE, BIT) MSG.data[BYTE-1] & (1 << (BIT - 1))
+#define CANBUS_MAP_TO_BUTTON_REGISTER(MSG, BUTTON, BYTE, BIT) {\
+    if(CANBUS_BUTTON_PRESSED(MSG, BYTE, BIT)) {\
+        CONTROL_BUTTON_REGISTER |= (1 << BUTTON);\
+    } else {\
+        CONTROL_BUTTON_REGISTER &= ~(1 << BUTTON);\
+    }\
+}
+
+#if defined (CONFIG_CT_UNSAFE) && defined (CONFIG_CT_CANBUS_NULLIFY)
+    #define VEHICLE_CANBUS_NULLIFY_MAYBE(ID, MSG) {}
+#else
+    #define VEHICLE_CANBUS_NULLIFY_MAYBE(ID, MSG) {}
+#endif
+
+#define CANBUS_PROCESS_BUTTON_PACKET(ID, MSG) {\
+case ID:\
+    xSemaphoreTake(CONTROL_BUTTON_REGISTER_LOCK, portMAX_DELAY);\
+    VEHICLE_READ_CANBUS_BUTTONS_##ID(MSG)\
+    VEHICLE_CANBUS_NULLIFY_MAYBE(ID, MSG)\
+    xSemaphoreGive(CONTROL_BUTTON_REGISTER_LOCK);\
+break;\
+}
 
 esp_err_t canbus_init(void);

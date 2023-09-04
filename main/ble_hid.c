@@ -14,7 +14,11 @@
 #define MAC2STR_REV(a) (a)[5], (a)[4], (a)[3], (a)[2], (a)[1], (a)[0]
 
 static const char *TAG = "ble_hid";
-
+#ifdef CONFIG_CT_DMD2_EVAL
+char CT_DEVICE_NAME[CT_DEVICE_NAME_LEN] = "DMD2 CTL 5K";
+#else
+char CT_DEVICE_NAME[CT_DEVICE_NAME_LEN] = "";
+#endif
 static int bleprph_gap_event(struct ble_gap_event *event, void *arg);
 static uint8_t own_addr_type;
 
@@ -361,10 +365,10 @@ esp_err_t ble_hid_init(void)
     int rc = gatt_svr_init();
     assert(rc == 0);
 
-    rc = ble_svc_gap_device_name_set("Cantastic2");
+    rc = ble_svc_gap_device_name_set(CT_DEVICE_NAME);
     assert(rc == 0);
 
-    rc = ble_svc_gap_device_appearance_set(HID_KEYBOARD_APPEARENCE); /* HID Keyboard*/
+    rc = ble_svc_gap_device_appearance_set(HID_KEYBOARD_APPEARENCE); 
     assert(rc == 0);
 
     ble_store_config_init();

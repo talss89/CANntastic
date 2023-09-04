@@ -195,6 +195,8 @@ extern "C" {
 #define DEFAULT_IO_CAP BLE_HS_IO_NO_INPUT_OUTPUT
 
 #define HID_KEYBOARD_APPEARENCE         0x03c1 // appearance field in advertising packet
+#define BLE_APPEARANCE_GENERIC_REMOTE_CONTROL   384
+#define BLE_APPEARANCE_GENERIC_HID   960
 
 struct ble_hs_cfg;
 struct ble_gatt_register_ctxt;

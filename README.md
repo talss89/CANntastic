@@ -1,53 +1,55 @@
-| Supported Targets | ESP32 | ESP32-C2 | ESP32-C3 | ESP32-C6 | ESP32-H2 | ESP32-S2 | ESP32-S3 |
-| ----------------- | ----- | -------- | -------- | -------- | -------- | -------- | -------- |
+# Cantastic
 
-# Hello World Example
+_A motorcycle accessory controller, integrating with CAN based bikes._
 
-Starts a FreeRTOS task to print "Hello World".
+**Currently, the only motorcycle supported is the Triumph Tiger 1200 Gen 3, but the firmware is designed to support other vehicles too.**
 
-(See the README.md file in the upper level 'examples' directory for more information about examples.)
+Features:
 
-## How to use example
+- **Make your factory switchgear smart** - Cantastic sets up a Bluetooth LE HID device, allowing you to activate a voice assistant, play / pause, and skip tracks via OEM handlebar controls.
+- **Extend your existing controls** - Mappable GPIO buttons, which coexist with CAN inputs.
 
-Follow detailed instructions provided specifically for this example.
+Planned:
 
-Select the instructions depending on Espressif chip installed on your development board:
+- **Button Passthrough** - For application support (eg. DMD2).
+- **Aftermarket TPMS** - Display tyre pressure information on dash.
+- **MOSFET Switching Stage** - Switch accessory circuits on / off via input rules.
 
-- [ESP32 Getting Started Guide](https://docs.espressif.com/projects/esp-idf/en/stable/get-started/index.html)
-- [ESP32-S2 Getting Started Guide](https://docs.espressif.com/projects/esp-idf/en/latest/esp32s2/get-started/index.html)
+Future Ideas:
 
+- **Datalogging** - Record control inputs, brake pressure, RPM, speed, gear, G-force for riding analysis.
+- **Proximity + Mesh** - Allow Cantastic units to detect other units and pass information between them. This could have a number of group riding uses, such as 'tail-end-charlie' notifications, accident / breakdown detection, map sync, etc.
+- **Virtual ACC** - Output a switched accessory +12v line, with programmable timing rules (eg. remain on 30s after ignition off). With power management.
+- **Interconnect System** - Allowing integration with other smart accessories, such as heated equipment, cameras, radar, intercoms, etc.
+- :warning: **CAN Nullifier** - Nullify control inputs, so controls can be fully repurposed. Eg. Stop OEM joystick affecting dashboard settings in certain modes, and allow us to repurpose the control for other uses. See CAN Nullifier section in this readme.
 
-## Example folder contents
+## Getting Started
 
-The project **hello_world** contains one source file in C language [hello_world_main.c](main/hello_world_main.c). The file is located in folder [main](main).
+### Hardware Requirements
 
-ESP-IDF projects are built using CMake. The project build configuration is contained in `CMakeLists.txt` files that provide set of directives and instructions describing the project's source files and targets (executable, library, or both).
+- ESP-IDF >5.1
+- ESP32-WROVER
 
-Below is short explanation of remaining files in the project folder.
+### Circuit Diagram
 
-```
-├── CMakeLists.txt
-├── pytest_hello_world.py      Python script used for automated testing
-├── main
-│   ├── CMakeLists.txt
-│   └── hello_world_main.c
-└── README.md                  This is the file you are currently reading
-```
+### Compile and Flash
 
-For more information on structure and contents of ESP-IDF projects, please refer to Section [Build System](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/build-system.html) of the ESP-IDF Programming Guide.
+## Extending to support other vehicles
 
-## Troubleshooting
+## CAN 'Nullifier'
 
-* Program upload failure
+> :warning: This is experimental, and does some naughty things. In certain applications, it could cause safety-critical systems to bus-off, resulting in possible loss of control, **injury** or **death**.
 
-    * Hardware connection is not correct: run `idf.py -p PORT monitor`, and reboot your board to see if there are any output logs.
-    * The baud rate for downloading is too high: lower your baud rate in the `menuconfig` menu, and try again.
+The purpose of CAN 'Nullification' is to nullify control inputs, so we can stop the dashboard reacting to button presses, and use those buttons for another purpose.
 
-## Technical support and feedback
+The idea behind this is fairly simple: If we detect a button press, we copy the CAN packet and send the inverse of the control that is to be inhibited. We leave the rest of the packet intact.
 
-Please use the following feedback channels:
+We only transmit this 'nullifier' packet in single-shot mode, as we expect we may cause a bus error, and do not want to push any OEM device off the bus via failed arbitration. In reality, if the CAN packet we are sending is being transmitted at a fairly low frequency, we are unlikely to cause a collision, but we must expect that we could collide, and must not force the OEM sender into error passive or bus-off.
 
-* For technical queries, go to the [esp32.com](https://esp32.com/) forum
-* For a feature request or bug report, create a [GitHub issue](https://github.com/espressif/esp-idf/issues)
+### Sending the 'inverse'?
 
-We will get back to you as soon as possible.
+More research needs to be done on this, and is likely to be vehicle specific. If the reciever (eg. dashboard) effectively tolerates high-frequency noise (ie. the button is low-pass filtered), we can just quickly send a `0` in response to a `1` to nullify the input. I think this is unlikely.
+
+The other approach is to send an inverse control press - this will only work for certain directional controls like the joystick. If we see a `Joystick Left` bit, we immediately send `Joystick Right`. The hope is that this will cancel out the original input.
+
+## API

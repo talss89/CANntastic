@@ -28,10 +28,8 @@
 
 static const char *TAG = "gatt_svr";
 
-int
-gatt_svr_chr_write(struct os_mbuf *om, uint16_t min_len, uint16_t max_len,
-                   void *dst, uint16_t *len)
-{
+int gatt_svr_chr_write(struct os_mbuf *om, uint16_t min_len, uint16_t max_len,
+                   void *dst, uint16_t *len) {
     uint16_t om_len;
     int rc;
 
@@ -48,11 +46,9 @@ gatt_svr_chr_write(struct os_mbuf *om, uint16_t min_len, uint16_t max_len,
     return 0;
 }
 
-int
-hid_svr_chr_access(uint16_t conn_handle, uint16_t attr_handle,
+int hid_svr_chr_access(uint16_t conn_handle, uint16_t attr_handle,
                              struct ble_gatt_access_ctxt *ctxt,
-                             void *arg)
-{
+                             void *arg) {
     uint16_t uuid16 = ble_uuid_u16(ctxt->chr->uuid);
     int rc;
 
@@ -148,11 +144,9 @@ hid_svr_chr_access(uint16_t conn_handle, uint16_t attr_handle,
 
 /* Report access function for all reports */
 
-int
-ble_svc_report_access(uint16_t conn_handle, uint16_t attr_handle,
+int ble_svc_report_access(uint16_t conn_handle, uint16_t attr_handle,
                              struct ble_gatt_access_ctxt *ctxt,
-                             void *arg)
-{
+                             void *arg) {
     uint16_t uuid16 = ble_uuid_u16(ctxt->chr->uuid);
     int handle_num = (int) arg;
     int rc = BLE_ATT_ERR_UNLIKELY;

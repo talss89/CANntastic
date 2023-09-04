@@ -2,6 +2,40 @@ menu "Cantastic Configuration"
 
     orsource "$IDF_PATH/examples/common_components/env_caps/$IDF_TARGET/Kconfig.env_caps"
 
+    choice CT_VEHICLE_MODEL
+        prompt "Vehicle Model"
+        default CT_VEHICLE_TIGER1200_GEN3
+        help
+            Select a vehicle model.
+        config CT_VEHICLE_TIGER1200_GEN3
+            bool  "Triumph Tiger 1200 Gen3 (Chassis ECM)"
+        config CT_VEHICLE_GENERIC
+            bool  "Generic - Non CAN"
+    endchoice
+
+    choice CT_CONTROL_SCHEME
+        prompt "Control Scheme"
+        default CT_SCHEME_BASIC
+        help
+            Select a control scheme.
+        config CT_SCHEME_BASIC
+            bool  "Basic"
+    endchoice
+
+    config CT_CUSTOM_GPIO
+        bool
+        default n
+        prompt "Enable the custom/gpio.h configuration?"
+        help
+            Gives the ability to map custom GPIO to button events.
+
+    config CT_DMD2_EVAL
+        bool
+        default n
+        prompt "Change device name to DMD2 controller compatible"
+        help
+            Enable this to allow DMD2 to pick up the uncertified device.
+
     config CT_CANBUS_TX_PIN
         int "CAN Transciever TX Pin"
         range ENV_GPIO_RANGE_MIN ENV_GPIO_IN_RANGE_MAX

@@ -68,9 +68,7 @@ static struct hid_device_data {
 };
 
 /* mark report for indicate/notify when central subscribes to service charachetric with report */
-void
-hid_set_notify(uint16_t attr_handle, uint8_t cur_notify, uint8_t cur_indicate)
-{
+void hid_set_notify(uint16_t attr_handle, uint8_t cur_notify, uint8_t cur_indicate) {
     int report_idx = -1;
 
     /* find hid_notify_data struct index of reports array for given atribute handle */

@@ -122,6 +122,12 @@
 #define HID_KEY_MUTE           127  // Keyboard Mute
 #define HID_KEY_VOLUME_UP      128  // Keyboard Volume up
 #define HID_KEY_VOLUME_DOWN    129  // Keyboard Volume down
+
+#define HID_KEY_DPAD_UP        144  // Keyboard Mute
+#define HID_KEY_DPAD_DOWN      145  // Keyboard Mute
+#define HID_KEY_DPAD_RIGHT     146  // Keyboard Mute
+#define HID_KEY_DPAD_LEFT      147  // Keyboard Mute
+
 #define HID_KEY_LEFT_CTRL      224  // Keyboard LeftContorl
 #define HID_KEY_LEFT_SHIFT     225  // Keyboard LeftShift
 #define HID_KEY_LEFT_ALT       226  // Keyboard LeftAlt
