@@ -31,3 +31,5 @@ FILTER.single_filter = true;\
 #define VEHICLE_PROCESS_CANBUS(MSG) {\
     CANBUS_PROCESS_BUTTON_PACKET(0x567, MSG)\
 }
+
+#endif
