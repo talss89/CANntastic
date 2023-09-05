@@ -39,6 +39,8 @@ Future Ideas:
 
 ## CAN 'Nullifier'
 
+**This is just an idea, and a place to store my thoughts. It may not be possible at all. I will update this section with findings once I test.**
+
 > :warning: This is experimental, and does some naughty things. In certain applications, it could cause safety-critical systems to bus-off, resulting in possible loss of control, **injury** or **death**.
 
 The purpose of CAN 'Nullification' is to nullify control inputs, so we can stop the dashboard reacting to button presses, and use those buttons for another purpose.
