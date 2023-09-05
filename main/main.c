@@ -40,7 +40,7 @@ void app_main(void) {
     ESP_ERROR_CHECK(esp_efuse_mac_get_default(mac));
 
     #ifndef CONFIG_CT_DMD2_EVAL
-    snprintf(CT_DEVICE_NAME, sizeof(CT_DEVICE_NAME), "CT-%02x%02x%02x", mac[5], mac[4], mac[3]);
+    snprintf(CT_DEVICE_NAME, sizeof(CT_DEVICE_NAME) * CT_DEVICE_NAME_LEN, "CT-%02x%02x%02x", mac[5], mac[4], mac[3]);
     #endif
 
     ble_hid_init();
