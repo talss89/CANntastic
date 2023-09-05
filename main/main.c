@@ -44,8 +44,8 @@ void app_main(void) {
     #endif
 
     ble_hid_init();
-    canbus_init();
     control_event_init();
+    canbus_init();
     control_scheme_init();
     control_event_start();
 

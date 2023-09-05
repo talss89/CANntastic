@@ -10,10 +10,10 @@ static const char* TAG = "canbus_listen";
 
 static twai_filter_config_t f_config =  TWAI_FILTER_CONFIG_ACCEPT_ALL();
 static const twai_timing_config_t t_config = TWAI_TIMING_CONFIG_500KBITS();
-static const twai_general_config_t g_config = {.mode = TWAI_MODE_LISTEN_ONLY,
+static const twai_general_config_t g_config = {.mode = TWAI_MODE_NORMAL,
                                               .tx_io = CONFIG_CT_CANBUS_TX_PIN, .rx_io = CONFIG_CT_CANBUS_RX_PIN,
                                               .clkout_io = TWAI_IO_UNUSED, .bus_off_io = TWAI_IO_UNUSED,
-                                              .tx_queue_len = 0, .rx_queue_len = 5,
+                                              .tx_queue_len = 32, .rx_queue_len = 32,
                                               .alerts_enabled = TWAI_ALERT_NONE,
                                               .clkout_divider = 0};
 
@@ -40,9 +40,8 @@ void canbus_listen_task(void* arg) {
     ESP_ERROR_CHECK(twai_start());
 
     while(1) {
-        
-        twai_receive(&rx_msg, pdMS_TO_TICKS(10));
 
+        twai_receive(&rx_msg, pdMS_TO_TICKS(10));
         if(rx_msg.rtr) {
             continue;
         }

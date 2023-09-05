@@ -9,7 +9,7 @@ static const char* TAG = "scheme_basic";
 SCHEME_INIT {
     SCHEME_SET_PAGE_COUNT(3);
 
-    SCHEME_SET_GESTURE_MASK(0, 0);
+    SCHEME_SET_GESTURE_MASK(0, 0 | (1 << SIGNAL_C));
     SCHEME_SET_GESTURE_MASK(1, ~0);
     SCHEME_SET_GESTURE_MASK(2, 0 | (1 << SIGNAL_C));
 }

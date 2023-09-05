@@ -17,19 +17,17 @@
     CANBUS_MAP_TO_BUTTON_REGISTER(MSG, RIDER_SEAT_HEAT, 4, 4)\
     CANBUS_MAP_TO_BUTTON_REGISTER(MSG, MODE, 4, 6)\
 }
-
-// #define VEHICLE_FILTER_CANBUS(FILTER) {
-// FILTER.acceptance_code = (0x567 << 21);
-// FILTER.acceptance_mask = ~(TWAI_STD_ID_MASK << 21);
-// FILTER.single_filter = true;
-// }
+/*
+#define VEHICLE_FILTER_CANBUS(FILTER) {\
+FILTER.acceptance_code = (0x567 << 21);\
+FILTER.acceptance_mask = ~(TWAI_STD_ID_MASK << 21);\
+FILTER.single_filter = true;\
+}*/
 
 #define VEHICLE_FILTER_CANBUS(FILTER) {\
-canbus_generate_filter(0x500, 0x600, &FILTER);\
+    canbus_generate_filter(0x500, 0x600, &FILTER);\
 }
 
 #define VEHICLE_PROCESS_CANBUS(MSG) {\
-CANBUS_PROCESS_BUTTON_PACKET(0x567, MSG)\
+    CANBUS_PROCESS_BUTTON_PACKET(0x567, MSG)\
 }
-
-#endif

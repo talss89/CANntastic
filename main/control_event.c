@@ -32,7 +32,6 @@ void control_event_task(void* arg) {
     
     CONTROL_BUTTON_REGISTER = 0;
 
-    CONTROL_BUTTON_REGISTER_LOCK = xSemaphoreCreateBinary();
     assert(CONTROL_BUTTON_REGISTER_LOCK != NULL);
 
     xSemaphoreGive(CONTROL_BUTTON_REGISTER_LOCK);
@@ -107,7 +106,7 @@ void control_event_task(void* arg) {
                         // High
                         ESP_LOGI(TAG, "Control %d is now high", i);
                         event.gesture.count++;
-                        event.gesture.long_press = true; // Set high count bit in anticipation of a long press
+                        event.gesture.long_press = true; // Set in anticipation of a long press
                     } else {
                         // Low
                         ESP_LOGI(TAG, "Control %d is now low", i);
@@ -143,6 +142,8 @@ esp_err_t control_event_init(void) {
     #ifdef VEHICLE_GPIO_SETUP
         VEHICLE_GPIO_SETUP()
     #endif
+
+    CONTROL_BUTTON_REGISTER_LOCK = xSemaphoreCreateBinary();
 
     esp_event_loop_args_t loop_args = {
         .queue_size = 32,

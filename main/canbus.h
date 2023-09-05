@@ -5,8 +5,11 @@
 #include "esp_err.h"
 #include "esp_log.h"
 #include "driver/twai.h"
+#include "sdkconfig.h"
+#include "vehicles.h"
 
 #include "control_event.h"
+
 
 typedef struct {
     ct_control_button_t button;
@@ -22,17 +25,10 @@ typedef struct {
     }\
 }
 
-#if defined (CONFIG_CT_UNSAFE) && defined (CONFIG_CT_CANBUS_NULLIFY)
-    #define VEHICLE_CANBUS_NULLIFY_MAYBE(ID, MSG) {}
-#else
-    #define VEHICLE_CANBUS_NULLIFY_MAYBE(ID, MSG) {}
-#endif
-
 #define CANBUS_PROCESS_BUTTON_PACKET(ID, MSG) {\
 case ID:\
     xSemaphoreTake(CONTROL_BUTTON_REGISTER_LOCK, portMAX_DELAY);\
     VEHICLE_READ_CANBUS_BUTTONS_##ID(MSG)\
-    VEHICLE_CANBUS_NULLIFY_MAYBE(ID, MSG)\
     xSemaphoreGive(CONTROL_BUTTON_REGISTER_LOCK);\
 break;\
 }
