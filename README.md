@@ -1,17 +1,17 @@
 # Cantastic
 
-_A motorcycle accessory controller, integrating with CAN based bikes._
+_A motorcycle accessory controller with BLE HID, integrating with CAN based bikes._
 
 **Currently, the only motorcycle supported is the Triumph Tiger 1200 Gen 3, but the firmware is designed to support other vehicles too.**
 
 Features:
 
-- **Make your factory switchgear smart** - Cantastic sets up a Bluetooth LE HID device, allowing you to activate a voice assistant, play / pause, and skip tracks via OEM handlebar controls.
+- **Media control via OEM handlebar controls** - Cantastic sets up a Bluetooth LE HID device, allowing you to activate a voice assistant, play / pause, and skip tracks via OEM handlebar controls.
 - **Extend your existing controls** - Mappable GPIO buttons, which coexist with CAN inputs.
+- **Button Passthrough** - For application support (eg. DMD2).
 
 Planned:
 
-- **Button Passthrough** - For application support (eg. DMD2).
 - **Aftermarket TPMS** - Display tyre pressure information on dash.
 - **MOSFET Switching Stage** - Switch accessory circuits on / off via input rules.
 
@@ -28,7 +28,8 @@ Future Ideas:
 ### Hardware Requirements
 
 - ESP-IDF >5.1
-- ESP32-WROVER
+- ESP32-WROVER / S3-WROOM-1
+- CAN Transceiver (TJA1050 et al.)
 
 ### Circuit Diagram
 
@@ -48,7 +49,7 @@ We only transmit this 'nullifier' packet in single-shot mode, as we expect we ma
 
 ### Sending the 'inverse'?
 
-More research needs to be done on this, and is likely to be vehicle specific. If the reciever (eg. dashboard) effectively tolerates high-frequency noise (ie. the button is low-pass filtered), we can just quickly send a `0` in response to a `1` to nullify the input. I think this is unlikely.
+More research needs to be done on this, and is likely to be vehicle specific. If the reciever (eg. dashboard) effectively tolerates high-frequency noise (ie. the button is low-pass filtered / debounced), we can just quickly send a `0` in response to a `1` to nullify the input. I think this is unlikely.
 
 The other approach is to send an inverse control press - this will only work for certain directional controls like the joystick. If we see a `Joystick Left` bit, we immediately send `Joystick Right`. The hope is that this will cancel out the original input.
 
