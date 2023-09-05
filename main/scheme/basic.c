@@ -9,7 +9,7 @@ static const char* TAG = "scheme_basic";
 SCHEME_INIT {
     SCHEME_SET_PAGE_COUNT(3);
 
-    SCHEME_SET_GESTURE_MASK(0, 0 | (1 << SIGNAL_C));
+    SCHEME_SET_GESTURE_MASK(0, 0);
     SCHEME_SET_GESTURE_MASK(1, ~0);
     SCHEME_SET_GESTURE_MASK(2, 0 | (1 << SIGNAL_C));
 }
@@ -66,13 +66,16 @@ SCHEME_ON_PLAIN {
             hid_keyboard_change_key(HID_KEY_ENTER, (bool) event->plain.state);
         break;
         case JOY_D:
-            hid_keyboard_change_key(HID_KEY_DPAD_DOWN, (bool) event->plain.state);
+            hid_keyboard_change_key(HID_KEY_DOWN_ARROW, (bool) event->plain.state);
         break;
         case JOY_U:
-            hid_keyboard_change_key(HID_KEY_DPAD_UP, (bool) event->plain.state);
+            hid_keyboard_change_key(HID_KEY_UP_ARROW, (bool) event->plain.state);
         break;
         case JOY_R:
-            hid_keyboard_change_key(HID_KEY_DPAD_LEFT, (bool) event->plain.state);
+            hid_keyboard_change_key(HID_KEY_RIGHT_ARROW, (bool) event->plain.state);
+        break;
+        case JOY_L:
+            hid_keyboard_change_key(HID_KEY_LEFT_ARROW, (bool) event->plain.state);
         break;
         default:
         break;
