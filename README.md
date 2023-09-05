@@ -1,5 +1,7 @@
 # Cantastic
 
+:warning: This is work in progress, and not suitable for use outside of testing and prototyping. Come back later!
+
 _A motorcycle accessory controller with BLE HID, integrating with CAN based bikes._
 
 **Currently, the only motorcycle supported is the Triumph Tiger 1200 Gen 3, but the firmware is designed to support other vehicles too.**
