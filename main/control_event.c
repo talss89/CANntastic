@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
-#include <math.h>
+
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_log.h"
@@ -30,7 +29,7 @@ void control_event_task(void* arg) {
 
     ct_control_button_register_t previous_state = 0;
     
-    CONTROL_BUTTON_REGISTER = 0;
+    CONTROL_BUTTON_REGISTER = 0ULL;
 
     assert(CONTROL_BUTTON_REGISTER_LOCK != NULL);
 

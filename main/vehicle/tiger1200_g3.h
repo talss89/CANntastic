@@ -25,7 +25,7 @@ FILTER.single_filter = true;\
 }*/
 
 #define VEHICLE_FILTER_CANBUS(FILTER) {\
-    canbus_generate_filter(0x500, 0x600, &FILTER);\
+    canbus_generate_filter(0x500, 0x5FF, &FILTER);\
 }
 
 #define VEHICLE_PROCESS_CANBUS(MSG) {\

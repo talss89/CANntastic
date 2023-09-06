@@ -61,25 +61,25 @@ SCHEME_ON_PLAIN {
     SCHEME_BEGIN_EVENT(event)
     ESP_LOGI(TAG, "Button %d, pressed %d", event->button, event->plain.state);
 
-    switch(event->button) {
-        case JOY_SEL:
-            hid_keyboard_change_key(HID_KEY_ENTER, (bool) event->plain.state);
-        break;
-        case JOY_D:
-            hid_keyboard_change_key(HID_KEY_DOWN_ARROW, (bool) event->plain.state);
-        break;
-        case JOY_U:
-            hid_keyboard_change_key(HID_KEY_UP_ARROW, (bool) event->plain.state);
-        break;
-        case JOY_R:
-            hid_keyboard_change_key(HID_KEY_RIGHT_ARROW, (bool) event->plain.state);
-        break;
-        case JOY_L:
-            hid_keyboard_change_key(HID_KEY_LEFT_ARROW, (bool) event->plain.state);
-        break;
-        default:
-        break;
-    }
+    // switch(event->button) {
+    //     // case JOY_SEL:
+    //     //     hid_keyboard_change_key(HID_KEY_ENTER, (bool) event->plain.state);
+    //     // break;
+    //     // case JOY_D:
+    //     //     hid_keyboard_change_key(HID_KEY_DOWN_ARROW, (bool) event->plain.state);
+    //     // break;
+    //     // case JOY_U:
+    //     //     hid_keyboard_change_key(HID_KEY_UP_ARROW, (bool) event->plain.state);
+    //     // break;
+    //     // case JOY_R:
+    //     //     hid_keyboard_change_key(HID_KEY_RIGHT_ARROW, (bool) event->plain.state);
+    //     // break;
+    //     // case JOY_L:
+    //     //     hid_keyboard_change_key(HID_KEY_LEFT_ARROW, (bool) event->plain.state);
+    //     // break;
+    //     // default:
+    //     // break;
+    // }
 }
 
 #endif
