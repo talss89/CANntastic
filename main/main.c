@@ -15,6 +15,7 @@
 #include "canbus.h"
 #include "control_event.h"
 #include "control_scheme.h"
+#include "tpms.h"
 
 #include "hid_codes.h"
 #include "hid_func.h"
@@ -46,6 +47,8 @@ void app_main(void) {
     ble_hid_init();
     control_event_init();
     canbus_init();
+    tpms_init();
+    tpms_start();
     control_scheme_init();
     control_event_start();
 
