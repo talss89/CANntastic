@@ -20,7 +20,17 @@ menu "Cantastic Configuration"
             Select a control scheme.
         config CT_SCHEME_BASIC
             bool  "Basic"
+        config CT_SCHEME_WEBCONFIG
+            bool  "Web Config"
     endchoice
+
+    config CT_WEB_CONFIG_MAX_RULES
+        int "Web config - max rules"
+        range 1 32
+        default 16
+        help
+            Max number of web confir scheme rules per page
+
 
     config CT_CUSTOM_GPIO
         bool

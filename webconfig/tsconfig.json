@@ -1,0 +1,17 @@
+{
+  "extends": "@roots/bud/config/jsconfig.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "paths": {
+      "@src/*": ["./src/*"]
+    },
+    "types": [
+      "@roots/bud",
+      "@roots/bud-swc",
+      "@roots/bud-tailwindcss",
+      "@roots/bud-postcss"
+    ]
+  },
+  "include": ["./bud.config.ts", "./src"],
+  "exclude": ["./node_modules", "./dist"]
+}

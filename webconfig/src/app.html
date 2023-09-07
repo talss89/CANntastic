@@ -1,0 +1,54 @@
+<header>
+    <h1>CANtastic <small>Configuration</small></h1>
+    <h2>Vehicle: Triumph Tiger 1200 Gen 3</h2>
+</header>
+<main x-data="config">
+    <section>
+        <p x-html="data.system_button"></p>
+        <h3>Map Select</h3>
+        <p>CANtastic allows you to switch between multiple control maps.</p>
+        <p class="control-prompt">
+            When <select>
+                <option>Indicator Cancel</option>
+                <option disabled>Indicator Right</option>
+                <option disabled>Indicator Left</option>
+
+            </select> is pressed and held, switch to the map corresponding to the number of presses.
+
+        </p>
+
+        <p><strong>For example:</strong> <em>press</em>, <em>press</em>, <em>hold</em> will switch to map
+            <strong>2</strong>
+        </p>
+
+    </section>
+
+    <section>
+        <h3>Control Map 1 (default)</h3>
+        <div class="">
+            When
+            <select>
+                <option>Indicator Cancel</option>
+                <option disabled>Indicator Right</option>
+                <option disabled>Indicator Left</option>
+
+            </select> is pressed
+
+            <select>
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+            </select>
+            time(s), send
+
+            <select>
+                <option>None</option>
+                <option>Play / Pause</option>
+                <option>Skip Fwd</option>
+                <option>Skip Back</option>
+                <option>Voice Assistant</option>
+            </select>
+        </div>
+</main>

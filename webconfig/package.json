@@ -1,0 +1,33 @@
+{
+  "name": "cantastic-webconfig",
+  "$schema": "https://bud.js.org/bud.package.json",
+  "description": "project bootstrapped with @roots/create-bud-app",
+  "engines": {
+    "node": ">=16"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/talss89/cantastic-webconfig.git"
+  },
+  "license": "MIT",
+  "type": "module",
+  "browserslist": [
+    "extends @roots/browserslist-config"
+  ],
+  "scripts": {
+    "build": "bud build production",
+    "dev": "bud build development"
+  },
+  "devDependencies": {
+    "@roots/bud": "^6.15.2",
+    "@roots/bud-postcss": "6.15.2",
+    "@roots/bud-swc": "6.15.2",
+    "@roots/bud-tailwindcss": "6.15.2",
+    "@tailwindcss/forms": "^0.5.6",
+    "alpinejs": "^3.13.0",
+    "env-file-parser": "^1.0.0"
+  },
+  "dependencies": {
+    "tailwindcss": "^3.3.3"
+  }
+}

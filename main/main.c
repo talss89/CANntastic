@@ -20,6 +20,7 @@
 #include "hid_func.h"
 
 #include "ble_hid.h"
+#include "web_config.h"
 
 static const char* TAG = "main_task";
 
@@ -41,6 +42,10 @@ void app_main(void) {
 
     #ifndef CONFIG_CT_DMD2_EVAL
     snprintf(CT_DEVICE_NAME, sizeof(CT_DEVICE_NAME) * CT_DEVICE_NAME_LEN, "CT-%02x%02x%02x", mac[5], mac[4], mac[3]);
+    #endif
+
+    #ifdef CONFIG_CT_SCHEME_WEBCONFIG
+        web_config_init();
     #endif
 
     ble_hid_init();

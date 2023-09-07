@@ -1,6 +1,8 @@
 #pragma once
 
 #include <inttypes.h>
+#include "control_event.h"
+#include "controls.h"
 
 #define SCHEME_MAX_PAGES 5
 #define SCHEME_PAGE_COUNT scheme_page_max
@@ -51,5 +53,4 @@ extern SCHEME_ON_GESTURE;
 extern SCHEME_ON_PLAIN;
 extern SCHEME_INIT;
 extern ct_control_button_register_t SCHEME_GESTURE_MASK[SCHEME_MAX_PAGES];
-
 esp_err_t control_scheme_init(void);
