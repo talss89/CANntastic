@@ -1,4 +1,4 @@
-# Cantastic
+# CANtastic
 
 :warning: This is work in progress, and not suitable for use outside of testing and prototyping. Come back later!
 
