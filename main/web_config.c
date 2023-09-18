@@ -370,20 +370,13 @@ static httpd_handle_t start_webserver(void)
 }
 
 void web_config_should_enter_setup(void* handler_arg, esp_event_base_t base, int32_t id, void* event_data) {
-    ct_control_event_t* event = (ct_control_event_t*) event_data;
-
-    if(event->gesture.long_press && event->button == SIGNAL_C) {
-        if(time_start - esp_timer_get_time() < 5000000ULL) {
-            ESP_LOGI(TAG, "CONFIG MODE!");
-        }
-    }
-
+    ESP_LOGI(TAG, "CONFIG MODE!");
 }
 
 esp_err_t web_config_init(void) {
     time_start = esp_timer_get_time();
 
-    ESP_ERROR_CHECK(esp_event_handler_register_with(CONTROL_EVENT_LOOP, CONTROL_EVENT_BASE, CONTROL_BUTTON_GESTURE_EVENT, web_config_should_enter_setup, NULL));
+    ESP_ERROR_CHECK(esp_event_handler_register_with(CONTROL_EVENT_LOOP, CONTROL_EVENT_BASE, CONTROL_BUTTON_SETUP_EVENT, web_config_should_enter_setup, NULL));
 
     /*
         Turn of warnings from HTTP server as redirecting traffic will yield
