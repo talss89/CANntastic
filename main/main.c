@@ -44,15 +44,18 @@ void app_main(void) {
     snprintf(CT_DEVICE_NAME, sizeof(CT_DEVICE_NAME) * CT_DEVICE_NAME_LEN, "CT-%02x%02x%02x", mac[5], mac[4], mac[3]);
     #endif
 
-    #ifdef CONFIG_CT_SCHEME_WEBCONFIG
-        web_config_init();
-    #endif
-
     ble_hid_init();
     control_event_init();
     canbus_init();
     control_scheme_init();
+
+    #ifdef CONFIG_CT_SCHEME_WEBCONFIG
+        web_config_init();
+    #endif
+
     control_event_start();
+
+    ESP_LOGI(TAG, "Control: %s", ct_control_button_t_labels[FRONT_BRAKE]);
 
     while(1) {
         vTaskDelay(1000 / portTICK_PERIOD_MS);

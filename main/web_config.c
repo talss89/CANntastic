@@ -12,6 +12,7 @@
 #include "nvs_flash.h"
 #include "nvs.h"
 #include "esp_system.h"
+#include "esp_timer.h"
 
 #include "esp_wifi.h"
 #include "esp_netif.h"
@@ -27,6 +28,8 @@ static const char* TAG = "web_config";
 
 extern const char index_html_start[] asm("_binary_index_html_gz_start");
 extern const char index_html_end[] asm("_binary_index_html_gz_end");
+
+static uint64_t time_start;
 
 ct_web_config_t WEB_CONFIG = {
     .system_button = SIGNAL_C,
@@ -350,7 +353,7 @@ static httpd_handle_t start_webserver(void)
 {
     httpd_handle_t server = NULL;
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
-    config.max_open_sockets = 13;
+    config.max_open_sockets = 7;
     config.lru_purge_enable = true;
 
     // Start the httpd server
@@ -366,7 +369,22 @@ static httpd_handle_t start_webserver(void)
     return server;
 }
 
+void web_config_should_enter_setup(void* handler_arg, esp_event_base_t base, int32_t id, void* event_data) {
+    ct_control_event_t* event = (ct_control_event_t*) event_data;
+
+    if(event->gesture.long_press && event->button == SIGNAL_C) {
+        if(time_start - esp_timer_get_time() < 5000000ULL) {
+            ESP_LOGI(TAG, "CONFIG MODE!");
+        }
+    }
+
+}
+
 esp_err_t web_config_init(void) {
+    time_start = esp_timer_get_time();
+
+    ESP_ERROR_CHECK(esp_event_handler_register_with(CONTROL_EVENT_LOOP, CONTROL_EVENT_BASE, CONTROL_BUTTON_GESTURE_EVENT, web_config_should_enter_setup, NULL));
+
     /*
         Turn of warnings from HTTP server as redirecting traffic will yield
         lots of invalid requests
@@ -374,6 +392,7 @@ esp_err_t web_config_init(void) {
     esp_log_level_set("httpd_uri", ESP_LOG_ERROR);
     esp_log_level_set("httpd_txrx", ESP_LOG_ERROR);
     esp_log_level_set("httpd_parse", ESP_LOG_ERROR);
+
 
 
     // Initialize networking stack

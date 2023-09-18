@@ -1,7 +1,10 @@
-import logo from './logo.svg'
+import controls from './controls.xd.json'
+import sdkconfig from '../../sdkconfig'
+
 
 import Alpine from 'alpinejs'
  
+//@ts-ignore
 window.Alpine = Alpine
 
 Alpine.data('config', () => ({
@@ -9,13 +12,12 @@ Alpine.data('config', () => ({
   async init() {
     let response = await this.fetchConfig();
     this.data = await response.json();
-    console.log('GOT DATA', this.data);
   },
   async fetchConfig() {
     return fetch('/config')
   },
-  scheme: (typeof(CONFIG_CT_SCHEME_BASIC) !== 'undefined' ? 'basic' : null) ??
-          (typeof(CONFIG_CT_SCHEME_WEBCONFIG) !== 'undefined' ? 'webconfig' : null) ?? 
+  scheme: (typeof(sdkconfig.CONFIG_CT_SCHEME_BASIC) !== 'undefined' ? 'basic' : null) ??
+          (typeof(sdkconfig.CONFIG_CT_SCHEME_WEBCONFIG) !== 'undefined' ? 'webconfig' : null) ?? 
           'unknown'
 }));
 

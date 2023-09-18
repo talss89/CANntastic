@@ -1,6 +1,10 @@
-// This file is generated automatically. DO NOT EDIT.
+/* This file is generated automatically. DO NOT EDIT. */
 
 #pragma once
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 typedef enum {
     NONE = 0x0,
@@ -18,7 +22,7 @@ typedef enum {
     JOY_D = 0xC,
     JOY_L = 0xD,
     JOY_R = 0xE,
-    HOME  = 0xF,
+    HOME = 0xF,
     MODE = 0x10,
     SIDESTAND = 0x11,
     RIDER_SEAT_HEAT = 0x12,
@@ -37,6 +41,42 @@ typedef enum {
     ACC_WHITE = 0x1F,
     ACC_BLACK = 0x20,
 } ct_control_button_t;
+
+static const char* ct_control_button_t_labels[33] = {
+    "None", 
+    "Front Brake", 
+    "", 
+    "", 
+    "", 
+    "", 
+    "", 
+    "", 
+    "", 
+    "", 
+    "", 
+    "", 
+    "", 
+    "", 
+    "", 
+    "", 
+    "", 
+    "", 
+    "", 
+    "", 
+    "", 
+    "", 
+    "", 
+    "", 
+    "", 
+    "", 
+    "", 
+    "", 
+    "", 
+    "", 
+    "", 
+    "", 
+    ""
+};
 
 typedef enum {
     ACTION_NONE = 0x0,
@@ -66,3 +106,6 @@ typedef enum {
     ACTION_F12 = 0x18,
 } ct_web_config_action_type_t;
 
+#ifdef __cplusplus
+}
+#endif

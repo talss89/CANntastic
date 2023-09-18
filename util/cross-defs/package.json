@@ -1,9 +1,0 @@
-{
-  "name": "cross-defs",
-  "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT",
-  "dependencies": {
-    "arg": "^5.0.2"
-  }
-}
