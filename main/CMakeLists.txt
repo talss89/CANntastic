@@ -8,8 +8,10 @@ idf_component_register(SRCS "main.c"
     "hid_func.c"
     "dns_server.c"
     "web_config.c"
+    "tpms.c"
     "scheme/basic.c"
     "scheme/webconfig.c"
+    "vehicle/tiger1200_g3.c"
     INCLUDE_DIRS "."
     )
 
@@ -32,3 +34,4 @@ set_property(DIRECTORY "${COMPONENT_DIR}" APPEND PROPERTY
 
 add_custom_target(webconfig COMMAND npm run build WORKING_DIRECTORY ${COMPONENT_DIR}/../webconfig)
 target_add_binary_data(${COMPONENT_LIB} ${COMPONENT_DIR}/../webconfig/dist-embedded/external/build/index.html.gz BINARY DEPENDS bud_build ${COMPONENT_DIR}/../webconfig/dist-embedded/index.html)
+
