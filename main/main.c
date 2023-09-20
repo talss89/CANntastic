@@ -45,20 +45,38 @@ void app_main(void) {
     snprintf(CT_DEVICE_NAME, sizeof(CT_DEVICE_NAME) * CT_DEVICE_NAME_LEN, "CT-%02x%02x%02x", mac[5], mac[4], mac[3]);
     #endif
 
+    web_config_read(&WEB_CONFIG);
+
+    ESP_LOGI(TAG, "TPMS1: %s", addr_str(&WEB_CONFIG.tpms_addr[0]));
+    ESP_LOGI(TAG, "TPMS2: %s", addr_str(&WEB_CONFIG.tpms_addr[1]));
+
+    tpms_init();
     ble_hid_init();
     control_event_init();
     canbus_init();
-    tpms_init();
     tpms_start();
     control_scheme_init();
-
-    #ifdef CONFIG_CT_SCHEME_WEBCONFIG
-        web_config_init();
-    #endif
-
     control_event_start();
 
-    ESP_LOGI(TAG, "Control: %s", ct_control_button_t_labels[FRONT_BRAKE]);
+    #ifdef CONFIG_CT_SCHEME_WEBCONFIG
+
+        vTaskDelay(pdMS_TO_TICKS(1000));
+
+        for(int x = 0; x < 3; x++) {
+            ESP_LOGI(TAG, "WAIT...");
+
+            if(!(CONTROL_BUTTON_REGISTER & (1 << SIGNAL_C)))
+                break;
+            
+            vTaskDelay(pdMS_TO_TICKS(1000));
+        }
+
+        if(CONTROL_BUTTON_REGISTER & (1 << SIGNAL_C)) {
+            web_config_init();
+            ESP_LOGI(TAG, "Starting configuration...");
+        }
+
+    #endif
 
     while(1) {
         vTaskDelay(1000 / portTICK_PERIOD_MS);

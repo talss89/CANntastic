@@ -7,6 +7,7 @@
 #include "esp_err.h"
 #include "control_scheme.h"
 #include "controls.h"
+#include "tpms.h"
 
 #define WEB_CONFIG_WIFI_SSID "CANtastic"
 #define WEB_CONFIG_WIFI_PASS "12345678"
@@ -15,6 +16,7 @@
 #define WEB_CONFIG web_config
 #define WEB_CONFIG_MAX_RULES CONFIG_CT_WEB_CONFIG_MAX_RULES
 #define WEB_CONFIG_REQUEST_BUFFER_SIZE 8192
+#define WEB_CONFIG_HTTP_QUERY_KEY_MAX_LEN 256
 
 typedef struct {
     ct_control_button_t button;
@@ -30,10 +32,12 @@ typedef struct {
 typedef struct {
     ct_control_button_t system_button;
     ct_web_config_page_rules_t page_rules[SCHEME_MAX_PAGES];
+    ble_addr_t tpms_addr[TPMS_WHEEL_COUNT];
 } ct_web_config_t;
 
 extern ct_web_config_t WEB_CONFIG;
 
 esp_err_t web_config_init(void);
+esp_err_t web_config_read(ct_web_config_t *config);
 
 #endif
