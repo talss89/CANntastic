@@ -1,3 +1,6 @@
 build/
 trace/
 heaptrace-gdbinit
+webconfig/node_modules
+webconfig/dist
+webocnfig/dist-embedded
