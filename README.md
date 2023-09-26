@@ -36,4 +36,4 @@ The prototype board is now running on my bike, and seems to work well. It provid
 
 I am also now working on a production prototype board, which will not rely on development boards or power modules. Here's the work-in-progress schematic:
 
-![Prototype 1 PCB Layout](https://github.com/talss89/cantastic/blob/main/docs/images/r1-schematic-pcb.png?raw=true)
+![Prototype 1 PCB Layout](https://github.com/talss89/cantastic/blob/main/docs/images/r1-schematic.png?raw=true)
