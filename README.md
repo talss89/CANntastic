@@ -30,10 +30,10 @@ Future Ideas:
 
 The prototype board is now running on my bike, and seems to work well. It provides tyre pressures to the dash via cheap BLE TPMS sensors as well as phone control via my indicator (turn signal) cancel button. It mounts to the ESP32 S3 Devkit C (which is on the back).
 
-![Prototype 1 PCB](https://github.com/talss89/cantastic/blob/main/prototype-1.jpeg?raw=true)
+![Prototype 1 PCB](https://github.com/talss89/cantastic/blob/main/docs/images/prototype-1.jpeg?raw=true)
 
-![Prototype 1 PCB Layout](https://github.com/talss89/cantastic/blob/main/prototype-1-pcb.png?raw=true)
+![Prototype 1 PCB Layout](https://github.com/talss89/cantastic/blob/main/docs/images/prototype-1-pcb.png?raw=true)
 
 I am also now working on a production prototype board, which will not rely on development boards or power modules. Here's the work-in-progress schematic:
 
-![Prototype 1 PCB Layout](https://github.com/talss89/cantastic/blob/main/r1-schematic-pcb.png?raw=true)
+![Prototype 1 PCB Layout](https://github.com/talss89/cantastic/blob/main/docs/images/r1-schematic-pcb.png?raw=true)
