@@ -1,6 +1,10 @@
 build/
 trace/
 heaptrace-gdbinit
-webconfig/node_modules
 webconfig/dist
 webocnfig/dist-embedded
+yarn-error.log
+sdkconfig.old
+partition_table
+**/node_modules
+  

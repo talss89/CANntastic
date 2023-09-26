@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  @apply h-full;
+}
+
+body {
+  @apply text-zinc-300 p-4 h-full;
+  @apply bg-gradient-to-b from-zinc-800 to-zinc-950; 
+} 
+
+h1 {
+  @apply text-xl;
+}
+h2 {
+  @apply text-sm;
+}
+h3 {
+  @apply text-sm font-bold;
+}
+
+header {
+  @apply text-center mb-4;
+}
+
+section {
+  @apply mb-2 rounded-lg bg-zinc-800 border-zinc-700 border-solid border text-zinc-300 p-4;
+  h3 {
+    @apply mb-2;
+  }
+
+  p {
+    @apply mt-4 text-sm;
+
+    &.control-prompt {
+      @apply text-base;
+    }
+  }
+}
+
+input, select {
+  @apply bg-zinc-700 text-zinc-300 rounded-md;
+}
+
+select {
+  @apply pr-8;
+}

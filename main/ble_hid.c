@@ -11,6 +11,15 @@
 
 #include "ble_hid.h"
 
+#include "modlog/modlog.h"
+#include "esp_central.h"
+
+#include "host/ble_hs.h"
+#include "host/util/util.h"
+#include "services/gap/ble_svc_gap.h"
+
+#include "tpms.h"
+
 #define MAC2STR_REV(a) (a)[5], (a)[4], (a)[3], (a)[2], (a)[1], (a)[0]
 
 static const char *TAG = "ble_hid";
@@ -21,6 +30,45 @@ char CT_DEVICE_NAME[CT_DEVICE_NAME_LEN] = "";
 #endif
 static int bleprph_gap_event(struct ble_gap_event *event, void *arg);
 static uint8_t own_addr_type;
+
+void ble_scan(void) {
+    uint8_t own_addr_type;
+    struct ble_gap_disc_params disc_params;
+    int rc;
+
+    /* Figure out address to use while advertising (no privacy for now) */
+    rc = ble_hs_id_infer_auto(0, &own_addr_type);
+    if (rc != 0)
+    {
+        MODLOG_DFLT(ERROR, "error determining address type; rc=%d\n", rc);
+        return;
+    }
+
+    /* Tell the controller to filter duplicates; we don't want to process
+     * repeated advertisements from the same device.
+     */
+    disc_params.filter_duplicates = 0;
+
+    /**
+     * Perform a passive scan.  I.e., don't send follow-up scan requests to
+     * each advertiser.
+     */
+    disc_params.passive = 1;
+
+    /* Use defaults for the rest of the parameters. */
+    disc_params.itvl = 0;
+    disc_params.window = 0;
+    disc_params.filter_policy = 0;
+    disc_params.limited = 0;
+
+    rc = ble_gap_disc(own_addr_type, BLE_HS_FOREVER, &disc_params,
+                      bleprph_gap_event, NULL);
+    if (rc != 0)
+    {
+        MODLOG_DFLT(ERROR, "Error initiating GAP discovery procedure; rc=%d\n",
+                    rc);
+    }
+}
 
 /**
  * Logs information about a connection to the console.
@@ -44,8 +92,7 @@ static void bleprph_print_conn_desc(struct ble_gap_conn_desc *desc) {
              desc->sec_state.bonded);
 }
 
-int user_parse(const struct ble_hs_adv_field *data, void *arg)
-{
+int user_parse(const struct ble_hs_adv_field *data, void *arg) {
     ESP_LOGI(TAG, "Parse data: field len %d, type %x, total %d bytes",
              data->length, data->type, data->length + 2); /* first byte type and second byte length */
     return 1;
@@ -154,17 +201,66 @@ int Disp_password = 123456;
  *                                  of the return code is specific to the
  *                                  particular GAP event being signalled.
  */
-static int bleprph_gap_event(struct ble_gap_event *event, void *arg) {
+static int bleprph_gap_event(struct ble_gap_event *event, void *arg)
+{
     struct ble_gap_conn_desc desc;
+    struct ble_hs_adv_fields fields;
+    ct_ble_tpms_packet_t tpms;
+
     int rc;
 
     switch (event->type)
     {
+    case BLE_GAP_EVENT_DISC:
+        rc = ble_hs_adv_parse_fields(&fields, event->disc.data,
+                                     event->disc.length_data);
+        if (rc != 0)
+        {
+            return 0;
+        }
+
+        if (!fields.uuids16)
+            return 0;
+
+        if (fields.uuids16->value != 0x27a5)
+            return 0;
+
+        if (fields.mfg_data_len != 7)
+            return 0;
+
+        memcpy(&tpms.data, fields.mfg_data, fields.mfg_data_len);
+        tpms.addr = event->disc.addr;
+
+        // memcpy(&tpms.addr, fields.public_tgt_addr, BLE_HS_ADV_PUBLIC_TGT_ADDR_ENTRY_LEN);
+
+        esp_event_post_to(TPMS_EVENT_LOOP, TPMS_EVENT_BASE, TPMS_UPDATE_EVENT, &tpms, sizeof(tpms), portMAX_DELAY);
+
+        // memcpy(&tpms, fields.mfg_data, sizeof(tpms));
+        // tpms.pressure = ((uint16_t) fields.mfg_data[3] << 8) | fields.mfg_data[4];
+
+        // ESP_LOGI(TAG, "%s %u",
+        //         fields.name, fields.uuids16->value);
+
+        // ESP_LOGI(TAG, "TPMS: %f psi, %fC, %fv", (float) (tpms.pressure - 147) / 10, (float) tpms.temp, (float) tpms.battery / 10);
+
+        // for (int i = 0; i < fields.mfg_data_len; i++)
+        // {
+        //     printf("0x%02X,", fields.mfg_data[i]);
+        // }
+
+        // printf("%d", ((uint16_t) fields.mfg_data[3] << 8) | fields.mfg_data[4]);
+
+        /* An advertisment report was received during GAP discovery. */
+        // print_adv_fields(&fields);
+        // print_conn_desc(&desc);
+
+        return 0;
+
     case BLE_GAP_EVENT_CONNECT:
         /* A new connection was established or a connection attempt failed. */
         ESP_LOGI(TAG, "connection %s; status=%d ",
                  event->connect.status == 0 ? "established" : "failed",
-                 (int) event->connect.status);
+                 (int)event->connect.status);
         if (event->connect.status == 0)
         {
             rc = ble_gap_conn_find(event->connect.conn_handle, &desc);
@@ -181,7 +277,7 @@ static int bleprph_gap_event(struct ble_gap_event *event, void *arg) {
         return 0;
 
     case BLE_GAP_EVENT_DISCONNECT:
-        ESP_LOGI(TAG, "disconnect; reason=%d ", (int) event->disconnect.reason);
+        ESP_LOGI(TAG, "disconnect; reason=%d ", (int)event->disconnect.reason);
         hid_set_disconnected();
 
         /* Connection terminated; resume advertising. */
@@ -196,31 +292,31 @@ static int bleprph_gap_event(struct ble_gap_event *event, void *arg) {
     case BLE_GAP_EVENT_CONN_UPDATE:
         /* The central has updated the connection parameters. */
         ESP_LOGI(TAG, "connection updated; status=%d ",
-                 (int) event->conn_update.status);
+                 (int)event->conn_update.status);
         return 0;
 
     case BLE_GAP_EVENT_ADV_COMPLETE:
         ESP_LOGI(TAG, "advertise complete; reason=%d",
-                 (int) event->adv_complete.reason);
+                 (int)event->adv_complete.reason);
         bleprph_advertise();
         return 0;
 
     case BLE_GAP_EVENT_ENC_CHANGE:
         /* Encryption has been enabled or disabled for this connection. */
         ESP_LOGI(TAG, "encryption change event; status=%d ",
-                 (int) event->enc_change.status);
+                 (int)event->enc_change.status);
         return 0;
 
     case BLE_GAP_EVENT_SUBSCRIBE:
         ESP_LOGI(TAG, "subscribe event; conn_handle=%d attr_handle=%04X "
                       "reason=%d prev_notify=%d cur_notify=%d prev_indicate=%d cur_indicate=%d",
-                 (int) event->subscribe.conn_handle,
+                 (int)event->subscribe.conn_handle,
                  event->subscribe.attr_handle,
-                 (int) event->subscribe.reason,
-                 (int) event->subscribe.prev_notify,
-                 (int) event->subscribe.cur_notify,
-                 (int) event->subscribe.prev_indicate,
-                 (int) event->subscribe.cur_indicate);
+                 (int)event->subscribe.reason,
+                 (int)event->subscribe.prev_notify,
+                 (int)event->subscribe.cur_notify,
+                 (int)event->subscribe.prev_indicate,
+                 (int)event->subscribe.cur_indicate);
 
         hid_set_notify(event->subscribe.attr_handle,
                        event->subscribe.cur_notify,
@@ -229,17 +325,17 @@ static int bleprph_gap_event(struct ble_gap_event *event, void *arg) {
 
     case BLE_GAP_EVENT_NOTIFY_TX:
         ESP_LOGI(TAG, "notify event; status=%d conn_handle=%d attr_handle=%04X type=%s",
-                 (int) event->notify_tx.status,
-                 (int) event->notify_tx.conn_handle,
+                 (int)event->notify_tx.status,
+                 (int)event->notify_tx.conn_handle,
                  event->notify_tx.attr_handle,
                  event->notify_tx.indication ? "indicate" : "notify");
         return 0;
 
     case BLE_GAP_EVENT_MTU:
         ESP_LOGI(TAG, "mtu update event; conn_handle=%d cid=%d mtu=%d",
-                 (int) event->mtu.conn_handle,
-                 (int) event->mtu.channel_id,
-                 (int) event->mtu.value);
+                 (int)event->mtu.conn_handle,
+                 (int)event->mtu.channel_id,
+                 (int)event->mtu.value);
         return 0;
 
     case BLE_GAP_EVENT_REPEAT_PAIRING:
@@ -269,9 +365,9 @@ static int bleprph_gap_event(struct ble_gap_event *event, void *arg) {
             /* This is the passkey to be entered on peer */
             pkey.passkey = Disp_password;
 
-            ESP_LOGI(TAG, "Enter passkey %d on the peer side", (int) pkey.passkey);
+            ESP_LOGI(TAG, "Enter passkey %d on the peer side", (int)pkey.passkey);
             rc = ble_sm_inject_io(event->passkey.conn_handle, &pkey);
-            ESP_LOGI(TAG, "ble_sm_inject_io result: %d", (int) rc);
+            ESP_LOGI(TAG, "ble_sm_inject_io result: %d", (int)rc);
         }
         else if (event->passkey.params.action == BLE_SM_IOACT_INPUT ||
                  event->passkey.params.action == BLE_SM_IOACT_NUMCMP ||
@@ -283,21 +379,25 @@ static int bleprph_gap_event(struct ble_gap_event *event, void *arg) {
         return 0;
 
     default:
-        ESP_LOGI(TAG, "Unknown GAP event: %d", (int) event->type);
+        ESP_LOGI(TAG, "Unknown GAP event: %d", (int)event->type);
     }
 
     return 0;
 }
 
-static void bleprph_on_reset(int reason) {
-    ESP_LOGE(TAG, "Resetting state; reason=%d", (int) reason);
+static void bleprph_on_reset(int reason)
+{
+    ESP_LOGE(TAG, "Resetting state; reason=%d", (int)reason);
 }
 
-static void bleprph_on_sync(void) {
+static void bleprph_on_sync(void)
+{
     int rc;
 
     rc = ble_hs_util_ensure_addr(0);
     assert(rc == 0);
+
+    ble_scan();
 
     /* Figure out address to use while advertising (no privacy for now) */
     rc = ble_hs_id_infer_auto(0, &own_addr_type);
@@ -362,13 +462,16 @@ esp_err_t ble_hid_init(void)
     ble_hs_cfg.sm_their_key_dist |= BLE_SM_PAIR_KEY_DIST_ID;
 #endif
 
-    int rc = gatt_svr_init();
+    int rc = peer_init(MYNEWT_VAL(BLE_MAX_CONNECTIONS), 64, 64, 64);
+    assert(rc == 0);
+
+    rc = gatt_svr_init();
     assert(rc == 0);
 
     rc = ble_svc_gap_device_name_set(CT_DEVICE_NAME);
     assert(rc == 0);
 
-    rc = ble_svc_gap_device_appearance_set(HID_KEYBOARD_APPEARENCE); 
+    rc = ble_svc_gap_device_appearance_set(HID_KEYBOARD_APPEARENCE);
     assert(rc == 0);
 
     ble_store_config_init();

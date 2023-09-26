@@ -5,8 +5,9 @@
 #include "freertos/semphr.h"
 
 #include "sdkconfig.h"
+#include "controls.h"
 
-#define CONTROL_GESTURE_WINDOW_MS 1000
+#define CONTROL_GESTURE_WINDOW_MS 900
 #define CONTROL_GESTURE_DEBOUNCE_uS 10000ULL
 #define CONTROL_BUTTON_REGISTER control_button_state
 #define CONTROL_BUTTON_REGISTER_LOCK control_button_state_sem
@@ -17,7 +18,8 @@ ESP_EVENT_DECLARE_BASE(CONTROL_EVENT_BASE);
 
 enum {
     CONTROL_BUTTON_EVENT,
-    CONTROL_BUTTON_GESTURE_EVENT
+    CONTROL_BUTTON_GESTURE_EVENT,
+    CONTROL_BUTTON_SETUP_EVENT
 };
 
 #define GPIO_MAP_TO_BUTTON_REGISTER(C, P) {\
@@ -36,43 +38,7 @@ enum {
     }\
 }
 
-typedef enum {
-    NONE,
-    // Factory fitted buttons
-    FRONT_BRAKE,
-    REAR_BRAKE,
-    CLUTCH,
-    SIGNAL_L,
-    SIGNAL_R,
-    SIGNAL_C,
-    SIGNAL_HAZARD,
-    FLASH,
-    FOG,
-    JOY_SEL,
-    JOY_U,
-    JOY_D,
-    JOY_L,
-    JOY_R,
-    HOME ,
-    MODE,
-    SIDESTAND,
-    RIDER_SEAT_HEAT,
-    HEADLIGHT_DRL,
-    HEADLIGHT_MAIN,
-    NEUTRAL,
-    // ACC_ buttons are intended for aftermarket functionality
-    ACC_DPAD_SEL,
-    ACC_DPAD_U,
-    ACC_DPAD_D,
-    ACC_DPAD_L,
-    ACC_DPAD_R,    
-    ACC_RED,
-    ACC_GREEN,
-    ACC_BLUE,
-    ACC_YELLOW,
-    ACC_WHITE,
-    ACC_BLACK 
-} ct_control_button_t;
+
 
 typedef struct {
     uint8_t count : 7;
