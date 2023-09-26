@@ -31,7 +31,7 @@
         } else { 
             tpms_packet.wheel = V_REAR_WHEEL;
             tpms_packet.status = (tpms_state->wheel[1].battery > 25 ? V_BATTERY_OK : V_BATTERY_LOW) | V_PRESSURE_STABLE;
-            tpms_packet.fault = V_FAULT_OK |V_TPMS_WARNING_OFF;
+            tpms_packet.fault = V_FAULT_OK | V_TPMS_WARNING_OFF;
             tpms_packet.pressure = tpms_state->wheel[1].pressure * 5;
             tpms_packet.temp = tpms_state->wheel[1].temperature + 50;
         }
