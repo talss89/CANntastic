@@ -1,3 +1,10 @@
 build/
 trace/
 heaptrace-gdbinit
+yarn-error.log
+sdkconfig.old
+partition_table
+webconfig/dist
+webconfig/dist-embedded
+**/node_modules
+  

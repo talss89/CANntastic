@@ -7,3 +7,4 @@
 extern char CT_DEVICE_NAME[CT_DEVICE_NAME_LEN];
 
 esp_err_t ble_hid_init(void);
+void ble_scan(void);

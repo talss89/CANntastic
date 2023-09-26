@@ -1,8 +1,9 @@
 #pragma once
+#include "sdkconfig.h"
 
 #ifdef CONFIG_CT_CUSTOM_GPIO
 
-    #define CUSTOM_GPIO_INPUT_PINS ((1ULL << 2) | (1ULL << 15) | (1ULL << 18) | (1ULL << 19) | (1ULL << 22))
+    #define CUSTOM_GPIO_INPUT_PINS ((1ULL << 0) | (1ULL << 15) | (1ULL << 18) | (1ULL << 17) | (1ULL << 21))
     
     #define CUSTOM_GPIO_SETUP() {\
         gpio_config_t custom_io_conf = {};\
@@ -14,12 +15,8 @@
         gpio_config(&custom_io_conf);\
     }
     
-    /* #define CUSTOM_READ_GPIO_BUTTONS() {\
-        GPIO_MAP_TO_BUTTON_REGISTER_INVERT(SIGNAL_C, 2)\
-        GPIO_MAP_TO_BUTTON_REGISTER_INVERT(JOY_L, 15)\
-        GPIO_MAP_TO_BUTTON_REGISTER_INVERT(JOY_R, 18)\
-        GPIO_MAP_TO_BUTTON_REGISTER_INVERT(JOY_D, 19)\
-        GPIO_MAP_TO_BUTTON_REGISTER_INVERT(JOY_U, 22)\
-    } */
+    
+    #define CUSTOM_READ_GPIO_BUTTONS() {\
+    } 
 
 #endif

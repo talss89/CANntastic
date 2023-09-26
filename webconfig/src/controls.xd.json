@@ -1,0 +1,97 @@
+{
+    "config": {
+        "lang": {
+            "c": {}
+        }
+    },
+    "define": [
+        {
+            "lang": {
+                "c": {
+                    "type": "typedef enum",
+                    "labels": true,
+                    "name": "ct_control_button_t"
+                },
+                "json": {
+                    "type": "map",
+                    "labels": false,
+                    "name": "buttons"
+                }
+            },
+            "symbols": [
+                ["NONE", "None"],
+                ["FRONT_BRAKE", "Front Brake"],
+                "REAR_BRAKE",
+                "CLUTCH",
+                "SIGNAL_L",
+                "SIGNAL_R",
+                "SIGNAL_C",
+                "SIGNAL_HAZARD",
+                "FLASH",
+                "FOG",
+                "JOY_SEL",
+                "JOY_U",
+                "JOY_D",
+                "JOY_L",
+                "JOY_R",
+                "HOME",
+                "MODE",
+                "SIDESTAND",
+                "RIDER_SEAT_HEAT",
+                "HEADLIGHT_DRL",
+                "HEADLIGHT_MAIN",
+                "NEUTRAL",
+                "ACC_DPAD_SEL",
+                "ACC_DPAD_U",
+                "ACC_DPAD_D",
+                "ACC_DPAD_L",
+                "ACC_DPAD_R",
+                "ACC_RED",
+                "ACC_GREEN",
+                "ACC_BLUE",
+                "ACC_YELLOW",
+                "ACC_WHITE",
+                "ACC_BLACK"
+            ]
+        },
+        {
+            "lang": {
+                "c": {
+                    "type": "typedef enum",
+                    "name": "ct_web_config_action_type_t"
+                },
+                "json": {
+                    "type": "map",
+                    "name": "action_type"
+                }
+            },
+            "symbols": [
+                "ACTION_NONE",
+                "ACTION_PLAY_PAUSE",
+                "ACTION_SKIP_FWD",
+                "ACTION_SKIP_REV",
+                "ACTION_VOICE_ASSIST",
+                "ACTION_VOL_UP",
+                "ACTION_VOL_DOWN",
+                "ACTION_ESC",
+                "ACTION_ENTER",
+                "ACTION_UP",
+                "ACTION_DOWN",
+                "ACTION_LEFT",
+                "ACTION_RIGHT",
+                "ACTION_F1",
+                "ACTION_F2",
+                "ACTION_F3",
+                "ACTION_F4",
+                "ACTION_F5",
+                "ACTION_F6",
+                "ACTION_F7",
+                "ACTION_F8",
+                "ACTION_F9",
+                "ACTION_F10",
+                "ACTION_F11",
+                "ACTION_F12"
+            ]
+        }
+    ]
+}
