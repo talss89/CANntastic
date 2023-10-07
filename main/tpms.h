@@ -17,6 +17,8 @@ esp_err_t tpms_init(void);
 #define TPMS_WHEEL_COUNT 2
 #define TPMS_STATE_LOCK tpms_state_lock
 #define TPMS_EVENT_LOOP tpms_event_loop_hdl
+#define TPMS_TIMEOUT_US 1000LL * 1000 * 60 * 5 // 5 Minutes
+
 
 enum {
     TPMS_UPDATE_EVENT
@@ -34,6 +36,8 @@ typedef struct {
     uint8_t pressure;
     int8_t temperature;
     uint8_t battery;
+    int64_t last_seen;
+    bool no_signal;
 } ct_tpms_wheel_t;
 
 typedef struct {

@@ -12,6 +12,7 @@
 
         twai_message_t tx_msg;
         ct_tiger_1200_g3_tpms_packet_t tpms_packet;
+        uint8_t wheel_index = 0;
 
         tx_msg.identifier = 0x600;
         tx_msg.data_length_code = 8;
@@ -19,21 +20,33 @@
         TPMS_ENTER_LOCK();
 
         tpms_packet.counter = tpms_counter;
-        tpms_packet.status = V_BATTERY_OK | V_PRESSURE_STABLE;
+        tpms_packet.status = 0;
+        tpms_packet.fault = 0;
         tpms_packet.unused = 0;
-        tpms_packet.fault = V_FAULT_OK | V_TPMS_WARNING_OFF;
 
         if(tpms_counter % 2 == 0) {
-            tpms_packet.wheel = V_FRONT_WHEEL;
-            tpms_packet.status = (tpms_state->wheel[0].battery > 25 ? V_BATTERY_OK : V_BATTERY_LOW) | V_PRESSURE_STABLE;
-            tpms_packet.pressure = tpms_state->wheel[0].pressure * 5;
-            tpms_packet.temp = tpms_state->wheel[0].temperature + 50;
+           wheel_index = 0;
+           tpms_packet.wheel = V_FRONT_WHEEL;
         } else { 
-            tpms_packet.wheel = V_REAR_WHEEL;
-            tpms_packet.status = (tpms_state->wheel[1].battery > 25 ? V_BATTERY_OK : V_BATTERY_LOW) | V_PRESSURE_STABLE;
-            tpms_packet.fault = V_FAULT_OK | V_TPMS_WARNING_OFF;
-            tpms_packet.pressure = tpms_state->wheel[1].pressure * 5;
-            tpms_packet.temp = tpms_state->wheel[1].temperature + 50;
+           wheel_index = 1;
+           tpms_packet.wheel = V_REAR_WHEEL;
+        }
+
+        if(tpms_state->wheel[wheel_index].no_signal || tpms_state->wheel[wheel_index].last_seen == 0) {
+            tpms_packet.status |= V_BATTERY_NO_SIGNAL;
+        } else {
+            tpms_packet.status |= (tpms_state->wheel[wheel_index].battery > 25 ? V_BATTERY_OK : V_BATTERY_LOW);
+        }
+
+        tpms_packet.pressure = tpms_state->wheel[wheel_index].pressure * 5;
+        tpms_packet.temp = tpms_state->wheel[wheel_index].temperature + 50;
+
+        tpms_packet.fault |= (tpms_state->wheel[wheel_index].no_signal ? V_FAULT_NO_COMMS : V_FAULT_OK);
+
+        if(tpms_state->warning) {
+            tpms_packet.fault |= V_TPMS_WARNING_ON;
+        } else {
+            tpms_packet.fault |= V_TPMS_WARNING_OFF;
         }
 
         TPMS_EXIT_LOCK();

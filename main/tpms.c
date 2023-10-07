@@ -18,6 +18,15 @@ void tpms_task(void* arg) {
         ESP_LOGI(TAG, "Sending TPMS Data...");
         VEHICLE_TPMS_SEND(tpms_state);
         esp_event_loop_run(TPMS_EVENT_LOOP, pdMS_TO_TICKS(VEHICLE_TPMS_INTERVAL_MS));
+
+        for(int i = 0; i < TPMS_WHEEL_COUNT; i ++) {
+            if((esp_timer_get_time() - tpms_state.wheel[i].last_seen) > TPMS_TIMEOUT_US) {
+                TPMS_ENTER_LOCK();
+                tpms_state.wheel[i].no_signal = true;
+                tpms_state.wheel[i].last_seen = esp_timer_get_time();
+                TPMS_EXIT_LOCK();
+            }
+        }
     }
 
     vTaskDelete(NULL);
@@ -47,6 +56,11 @@ void tpms_consume_update(void* handler_arg, esp_event_base_t base, int32_t id, v
     tpms_state.wheel[wheel_index].pressure = (uint8_t) (((((uint16_t) tpms->data[3] << 8) | tpms->data[4]) - 147) / 10);
     tpms_state.wheel[wheel_index].temperature = (uint8_t) tpms->data[2];
     tpms_state.wheel[wheel_index].battery = (uint8_t) tpms->data[1];
+    tpms_state.wheel[wheel_index].last_seen = esp_timer_get_time();
+
+    if(tpms_state.wheel[wheel_index].pressure < 32) { // TODO: Set values from web ui
+        tpms_state.warning = true;
+    }
 
     TPMS_EXIT_LOCK();
 
@@ -62,7 +76,6 @@ esp_err_t tpms_start(void) {
 esp_err_t tpms_init(void) {
     TPMS_STATE_LOCK = xSemaphoreCreateBinary();
     
-
     esp_event_loop_args_t loop_args = {
         .queue_size = 32,
         .task_name = NULL,
@@ -73,6 +86,17 @@ esp_err_t tpms_init(void) {
 
     ESP_ERROR_CHECK(esp_event_loop_create(&loop_args, &TPMS_EVENT_LOOP));
     ESP_ERROR_CHECK(esp_event_handler_register_with(TPMS_EVENT_LOOP, TPMS_EVENT_BASE, TPMS_UPDATE_EVENT, tpms_consume_update, NULL));
+
+    for(int i = 0; i < TPMS_WHEEL_COUNT; i ++) {
+        tpms_state.wheel[i].pressure = 0;
+        tpms_state.wheel[i].temperature = 0;
+        tpms_state.wheel[i].last_seen = 0;
+        tpms_state.wheel[i].battery = 0;
+        tpms_state.wheel[i].no_signal = false;
+    }
+
+    tpms_state.warning = false;
+    
     TPMS_EXIT_LOCK();
     
     return ESP_OK;
